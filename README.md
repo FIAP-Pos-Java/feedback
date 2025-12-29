@@ -46,13 +46,13 @@ Tem mais exemplos no arquivo [CURL_EXAMPLES.md](CURL_EXAMPLES.md)
 
 ```
 src/main/java/com/feedback/
-├── config/      # Config AWS
-├── dto/         # DTOs
-├── lambda/      # Handlers Lambda
-├── model/       # Entidades
-├── repository/  # DynamoDB
-├── resource/    # Endpoint REST
-└── service/     # Lógica
+ config/      # Config AWS
+ dto/         # DTOs
+ lambda/      # Handlers Lambda
+ model/       # Entidades
+ repository/  # DynamoDB
+ resource/    # Endpoint REST
+ service/     # Lógica
 ```
 
 ## Configuração
@@ -68,8 +68,8 @@ Variáveis de ambiente (ou no `application.properties`):
 ## O que precisa na AWS?
 
 1. **DynamoDB**: Tabela `feedbacks`
-   - Partition Key: `id` (String)
-   - Sort Key: `dataCriacao` (String)
+   - `id` (String)
+   - `dataCriacao` (String)
 
 2. **SNS**: Tópico com subscription para a Lambda de alertas
 
@@ -88,31 +88,6 @@ Variáveis de ambiente (ou no `application.properties`):
 O JAR fica em `target/feedback-1.0.0-SNAPSHOT-runner.jar`
 
 Para deploy, faz upload do JAR na AWS Console ou usa SAM/Serverless Framework.
-
-## Estrutura de dados
-
-### Request (POST /avaliacao)
-```json
-{
-  "descricao": "Aula excelente!",
-  "nota": 9
-}
-```
-
-### Response (201)
-```json
-{
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "mensagem": "Avaliação registrada com sucesso"
-}
-```
-
-### DynamoDB (feedbacks)
-- `id` (String) - Partition Key
-- `dataCriacao` (String) - Sort Key
-- `descricao` (String)
-- `nota` (Number, 0-10)
-- `critico` (Boolean)
 
 ## Dicas
 
