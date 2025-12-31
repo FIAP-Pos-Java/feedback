@@ -7,7 +7,6 @@ import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.ses.SesClient;
 import software.amazon.awssdk.services.sns.SnsClient;
 
 @ApplicationScoped
@@ -37,14 +36,4 @@ public class AwsConfig {
             .credentialsProvider(DefaultCredentialsProvider.builder().build())
             .build();
     }
-
-    @Produces
-    @ApplicationScoped
-    public SesClient sesClient() {
-        return SesClient.builder()
-            .region(Region.of(awsRegion))
-            .credentialsProvider(DefaultCredentialsProvider.builder().build())
-            .build();
-    }
 }
-

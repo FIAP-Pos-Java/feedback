@@ -1,96 +1,130 @@
-# Sistema de Feedback - AWS Lambda
+# Sistema de Feedback - AWS Lambda com Quarkus
 
-Sistema serverless que recebe feedbacks de alunos, envia alertas quando são críticos e gera relatórios semanais.
+É um sistema serverless que recebe feedbacks de alunos.
 
 ## O que faz?
 
-1. **Recebe avaliações** - Endpoint que recebe feedbacks com descrição e nota (0 a 10)
-2. **Envia alertas** - Se a nota for ≤ 3, envia email automático
-3. **Gera relatórios** - Toda semana calcula a média das notas
+O sistema tem 1 função principal:
+
+1. **Receber avaliações** - Endpoint REST que recebe feedbacks com descrição e nota (0 a 10)
 
 ## Como funciona?
 
 ```
-POST /avaliacao → Salva no DynamoDB
-                    ↓
-              Se nota ≤ 3 → SNS → Lambda → Envia email
-
-EventBridge (semanal) → Lambda → Busca no DynamoDB → Calcula média → Log
+Cliente → POST /avaliacao → Salva no DynamoDB
 ```
 
 ## Tecnologias
 
 - Java 21
-- Quarkus
-- AWS Lambda, DynamoDB, SNS, SES, EventBridge, CloudWatch
+- Quarkus 3.30.5
+- AWS Lambda
+- DynamoDB (banco de dados)
+- CloudWatch (logs)
 
-## Como rodar?
+## Como rodar localmente?
 
 ```bash
 ./mvnw quarkus:dev
 ```
 
-Depois acessa: `http://localhost:8080`
+A aplicação vai rodar em `http://localhost:8080`
 
-### Testar
+### Testar o endpoint
 
 ```bash
 curl -X POST http://localhost:8080/avaliacao \
   -H "Content-Type: application/json" \
-  -d '{"descricao": "Aula boa!", "nota": 9}'
+  -d '{
+    "descricao": "Aula muito boa!",
+    "nota": 9
+  }'
 ```
 
-Tem mais exemplos no arquivo [CURL_EXAMPLES.md](CURL_EXAMPLES.md)
+**Mais exemplos de requisições:** Veja o arquivo [CURL_EXAMPLES.md](CURL_EXAMPLES.md) com vários exemplos de curl para testar no Postman ou terminal.
 
-## Estrutura
+## Estrutura do projeto
 
 ```
 src/main/java/com/feedback/
- config/      # Config AWS
- dto/         # DTOs
- lambda/      # Handlers Lambda
- model/       # Entidades
- repository/  # DynamoDB
- resource/    # Endpoint REST
- service/     # Lógica
+├── config/          # Configurações AWS
+├── dto/             # Objetos de transferência de dados
+├── exception/       # Exceções customizadas
+├── lambda/          # Handlers das Lambdas
+├── model/           # Entidades (Feedback)
+├── repository/      # Acesso ao DynamoDB
+├── resource/        # Endpoint REST
+└── service/         # Lógica de negócio
 ```
 
 ## Configuração
 
-Variáveis de ambiente (ou no `application.properties`):
+As configurações ficam no `application.properties` ou podem ser passadas como variáveis de ambiente:
 
-- `AWS_REGION` - Região (padrão: us-east-1)
+- `AWS_REGION` - Região AWS (padrão: us-east-1)
 - `DYNAMODB_TABLE_NAME` - Nome da tabela (padrão: feedbacks)
-- `SNS_TOPIC_ARN` - ARN do tópico SNS
-- `SES_EMAIL_DESTINO` - Email destino (padrão: eduardaclx@gmail.com)
-- `SES_EMAIL_REMETENTE` - Email remetente (precisa estar verificado no SES)
 
 ## O que precisa na AWS?
 
-1. **DynamoDB**: Tabela `feedbacks`
-   - `id` (String)
-   - `dataCriacao` (String)
+1. **DynamoDB**: Criar tabela `feedbacks` com:
+   - Partition Key: `id` (String)
+   - Sort Key: `dataCriacao` (String)
 
-2. **SNS**: Tópico com subscription para a Lambda de alertas
+2. **IAM**: Dar permissões para a Lambda acessar DynamoDB e CloudWatch
 
-3. **SES**: Verificar emails (remetente e destino)
-
-4. **EventBridge**: Regra de cron semanal para relatório
-
-5. **IAM**: Permissões para DynamoDB, SNS, SES, CloudWatch
-
-## Build e Deploy
+## Build
 
 ```bash
 ./mvnw clean package
 ```
 
-O JAR fica em `target/feedback-1.0.0-SNAPSHOT-runner.jar`
+O JAR vai ficar em `target/feedback-1.0.0-SNAPSHOT-runner.jar`
 
-Para deploy, faz upload do JAR na AWS Console ou usa SAM/Serverless Framework.
+## Deploy
 
-## Dicas
+Pode fazer upload do JAR na AWS Console ou usar SAM/Serverless Framework. A Lambda precisa ser configurada como:
 
-- Se der erro, verifica as variáveis de ambiente
-- Checa as permissões IAM
-- Olha os logs no CloudWatch
+- **AvaliacaoResource**: Configurar como Function URL ou API Gateway
+
+## Estrutura de dados
+
+### Tabela DynamoDB (feedbacks)
+
+- `id` (String) - Partition Key
+- `dataCriacao` (String) - Sort Key
+- `descricao` (String)
+- `nota` (Number, 0-10)
+- `critico` (Boolean)
+
+### Endpoint POST /avaliacao
+
+**Request:**
+```json
+{
+  "descricao": "Aula excelente!",
+  "nota": 9
+}
+```
+
+**Response (201):**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "mensagem": "Avaliação registrada com sucesso"
+}
+```
+
+## Observações
+
+- O código segue princípios de responsabilidade única (cada classe faz uma coisa só)
+- Validação usando Bean Validation
+- Tratamento de erros com respostas HTTP adequadas
+- Logs estruturados no CloudWatch
+
+## Dúvidas?
+
+Se tiver algum problema, verifica:
+- Se as variáveis de ambiente estão configuradas
+- Se as permissões IAM estão corretas
+- Se os serviços AWS estão criados (DynamoDB)
+- Os logs no CloudWatch para ver erros

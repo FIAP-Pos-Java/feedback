@@ -4,6 +4,7 @@ import com.feedback.dto.AvaliacaoRequest;
 import com.feedback.dto.AvaliacaoResponse;
 import com.feedback.dto.ErrorResponse;
 import com.feedback.service.AvaliacaoService;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -15,6 +16,7 @@ import jakarta.ws.rs.core.Response;
 import org.jboss.logging.Logger;
 
 @Path("/avaliacao")
+@ApplicationScoped
 public class AvaliacaoResource {
 
     private static final Logger LOG = Logger.getLogger(AvaliacaoResource.class);
