@@ -1,100 +1,55 @@
 # Sistema de Feedback - AWS Lambda com Quarkus
 
-É um sistema serverless que recebe feedbacks de alunos.
-
-## O que faz?
-
-O sistema tem 1 função principal:
-
-1. **Receber avaliações** - Endpoint REST que recebe feedbacks com descrição e nota (0 a 10)
-
-## Como funciona?
-
-```
-Cliente → POST /avaliacao → Salva no DynamoDB
-```
+É um sistema serverless que recebe feedbacks de alunos com notas de 0 a 10.
 
 ## Tecnologias
 
 - Java 21
-- Quarkus 3.30.5
+- Quarkus
 - AWS Lambda
 - DynamoDB (banco de dados)
 - CloudWatch (logs)
 
 ## Como rodar localmente?
 
-```bash
 ./mvnw quarkus:dev
-```
 
 A aplicação vai rodar em `http://localhost:8080`
 
+ps: Necessário docker ativo
+
 ### Testar o endpoint
 
-```bash
+bash:
 curl -X POST http://localhost:8080/avaliacao \
   -H "Content-Type: application/json" \
   -d '{
     "descricao": "Aula muito boa!",
     "nota": 9
   }'
-```
-
-**Mais exemplos de requisições:** Veja o arquivo [CURL_EXAMPLES.md](CURL_EXAMPLES.md) com vários exemplos de curl para testar no Postman ou terminal.
-
-## Estrutura do projeto
-
-```
-src/main/java/com/feedback/
-├── config/          # Configurações AWS
-├── dto/             # Objetos de transferência de dados
-├── exception/       # Exceções customizadas
-├── lambda/          # Handlers das Lambdas
-├── model/           # Entidades (Feedback)
-├── repository/      # Acesso ao DynamoDB
-├── resource/        # Endpoint REST
-└── service/         # Lógica de negócio
-```
 
 ## Configuração
 
-As configurações ficam no `application.properties` ou podem ser passadas como variáveis de ambiente:
+As configurações ficam no application.properties ou podem ser passadas como variáveis de ambiente:
 
 - `AWS_REGION` - Região AWS (padrão: us-east-1)
 - `DYNAMODB_TABLE_NAME` - Nome da tabela (padrão: feedbacks)
 
-## O que precisa na AWS?
+## Configuração na AWS
 
-1. **DynamoDB**: Criar tabela `feedbacks` com:
-   - Partition Key: `id` (String)
-   - Sort Key: `dataCriacao` (String)
+Utilizando DynamoDB, crie a tabela com o nome `feedbacks`
+- id (String) - Partition Key
+- dataCriacao (String) - Sort Key
+- descricao (String)
+- nota (Number, 0-10)
+- critico (Boolean)
 
-2. **IAM**: Dar permissões para a Lambda acessar DynamoDB e CloudWatch
+Permissões a lambda acessar o DynamoDB e CloudWatch (IAM)
 
-## Build
+## Gerando arquivo para colocar na AWS
 
-```bash
+bash:
 ./mvnw clean package
-```
-
-O JAR vai ficar em `target/feedback-1.0.0-SNAPSHOT-runner.jar`
-
-## Deploy
-
-Pode fazer upload do JAR na AWS Console ou usar SAM/Serverless Framework. A Lambda precisa ser configurada como:
-
-- **AvaliacaoResource**: Configurar como Function URL ou API Gateway
-
-## Estrutura de dados
-
-### Tabela DynamoDB (feedbacks)
-
-- `id` (String) - Partition Key
-- `dataCriacao` (String) - Sort Key
-- `descricao` (String)
-- `nota` (Number, 0-10)
-- `critico` (Boolean)
 
 ### Endpoint POST /avaliacao
 
@@ -106,20 +61,13 @@ Pode fazer upload do JAR na AWS Console ou usar SAM/Serverless Framework. A Lamb
 }
 ```
 
-**Response (201):**
+**Response esperado:**
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
   "mensagem": "Avaliação registrada com sucesso"
 }
 ```
-
-## Observações
-
-- O código segue princípios de responsabilidade única (cada classe faz uma coisa só)
-- Validação usando Bean Validation
-- Tratamento de erros com respostas HTTP adequadas
-- Logs estruturados no CloudWatch
 
 ## Dúvidas?
 
