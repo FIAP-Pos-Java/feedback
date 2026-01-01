@@ -26,9 +26,6 @@ public class AvaliacaoService {
     @Inject
     SnsClient snsClient;
 
-    @ConfigProperty(name = "dynamodb.table.name", defaultValue = "feedbacks")
-    String tableName;
-
     @ConfigProperty(name = "sns.topic.arn")
     Optional<String> snsTopicArn;
 

@@ -39,7 +39,6 @@ public class Feedback extends PanacheEntityBase {
         this.critico = critico;
     }
 
-    // Getters para compatibilidade com código existente
     public String getId() {
         return id;
     }
