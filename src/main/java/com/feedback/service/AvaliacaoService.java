@@ -5,36 +5,37 @@ import com.feedback.dto.AvaliacaoResponse;
 import com.feedback.model.Feedback;
 import com.feedback.repository.FeedbackRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
 import software.amazon.awssdk.services.sns.model.SnsException;
 
-import java.util.Optional;
-
-@ApplicationScoped
+@Service
 public class AvaliacaoService {
 
-    private static final Logger LOG = Logger.getLogger(AvaliacaoService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AvaliacaoService.class);
 
-    @Inject
-    FeedbackRepository feedbackRepository;
+    @Autowired
+    private FeedbackRepository feedbackRepository;
 
-    @Inject
-    SnsClient snsClient;
+    @Autowired
+    private SnsClient snsClient;
 
-    @ConfigProperty(name = "sns.topic.arn")
-    Optional<String> snsTopicArn;
+    @Value("${aws.sns.topic.arn:}")
+    private String snsTopicArn;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    @Transactional
     public AvaliacaoResponse processarAvaliacao(AvaliacaoRequest request) {
         validarAvaliacao(request);
         Feedback feedback = Feedback.fromRequest(request.getDescricao(), request.getNota());
-        Feedback feedbackSalvo = feedbackRepository.salvar(feedback);
+        Feedback feedbackSalvo = feedbackRepository.save(feedback);
 
         if (feedbackSalvo.getCritico() != null && feedbackSalvo.getCritico()) {
             publicarAlertaCritico(feedbackSalvo);
@@ -47,7 +48,7 @@ public class AvaliacaoService {
     }
 
     private void publicarAlertaCritico(Feedback feedback) {
-        if (snsTopicArn.isEmpty() || snsTopicArn.get().isEmpty()) {
+        if (snsTopicArn == null || snsTopicArn.isEmpty()) {
             LOG.warn("SNS Topic ARN não configurado. Alerta crítico não será publicado.");
             return;
         }
@@ -56,18 +57,18 @@ public class AvaliacaoService {
             String mensagem = objectMapper.writeValueAsString(feedback);
             
             PublishRequest publishRequest = PublishRequest.builder()
-                .topicArn(snsTopicArn.get())
+                .topicArn(snsTopicArn)
                 .subject("Alerta: Feedback Crítico Recebido")
                 .message(mensagem)
                 .build();
 
             snsClient.publish(publishRequest);
-            LOG.infof("Alerta crítico publicado no SNS. Feedback ID: %s, Nota: %d", 
+            LOG.info("Alerta crítico publicado no SNS. Feedback ID: {}, Nota: {}", 
                 feedback.getId(), feedback.getNota());
         } catch (SnsException e) {
-            LOG.errorf(e, "Erro ao publicar alerta crítico no SNS. Feedback ID: %s", feedback.getId());
+            LOG.error("Erro ao publicar alerta crítico no SNS. Feedback ID: {}", feedback.getId(), e);
         } catch (Exception e) {
-            LOG.errorf(e, "Erro ao serializar feedback para SNS. Feedback ID: %s", feedback.getId());
+            LOG.error("Erro ao serializar feedback para SNS. Feedback ID: {}", feedback.getId(), e);
         }
     }
 

@@ -1,32 +1,28 @@
 package com.feedback.model;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "feedbacks")
-@RegisterForReflection
-public class Feedback extends PanacheEntityBase {
+public class Feedback {
 
     @Id
     @Column(length = 36)
-    public String id;
+    private String id;
 
     @Column(nullable = false, length = 1000)
-    public String descricao;
+    private String descricao;
 
     @Column(nullable = false)
-    public Integer nota;
+    private Integer nota;
 
     @Column(name = "data_criacao", nullable = false)
-    public LocalDateTime dataCriacao;
+    private LocalDateTime dataCriacao;
 
     @Column(nullable = false)
-    public Boolean critico;
+    private Boolean critico;
 
     public Feedback() {
     }
@@ -87,4 +83,3 @@ public class Feedback extends PanacheEntityBase {
         return new Feedback(id, descricao, nota, dataCriacao, critico);
     }
 }
-
