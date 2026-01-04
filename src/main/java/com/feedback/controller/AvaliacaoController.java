@@ -24,19 +24,14 @@ public class AvaliacaoController {
     @PostMapping
     public ResponseEntity<?> criarAvaliacao(@Valid @RequestBody AvaliacaoRequest request) {
         try {
-            LOG.info("Recebida avaliação - Nota: {}, Descrição: {}", 
-                request.getNota(), 
-                request.getDescricao().substring(0, Math.min(50, request.getDescricao().length())));
-
             AvaliacaoResponse response = avaliacaoService.processarAvaliacao(request);
-
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (IllegalArgumentException e) {
-            LOG.error("Erro de validação ao processar avaliação", e);
+            LOG.error("Erro de validacao", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse("Erro de validação: " + e.getMessage()));
         } catch (Exception e) {
-            LOG.error("Erro inesperado ao processar avaliação", e);
+            LOG.error("Erro ao processar avaliacao", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse("Erro interno ao processar avaliação"));
         }

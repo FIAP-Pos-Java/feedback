@@ -64,12 +64,10 @@ public class AvaliacaoService {
                 .build();
 
             snsClient.publish(publishRequest);
-            LOG.info("Alerta crítico publicado no SNS. Feedback ID: {}, Nota: {}", 
-                feedback.getId(), feedback.getNota());
         } catch (SnsException e) {
-            LOG.error("Erro ao publicar alerta crítico no SNS. Feedback ID: {}", feedback.getId(), e);
+            LOG.error("Erro ao publicar no SNS. Feedback ID: {}", feedback.getId(), e);
         } catch (Exception e) {
-            LOG.error("Erro ao serializar feedback para SNS. Feedback ID: {}", feedback.getId(), e);
+            LOG.error("Erro ao serializar feedback. Feedback ID: {}", feedback.getId(), e);
         }
     }
 
