@@ -23,9 +23,8 @@ public class AwsConfig {
     public SnsClient snsClient() {
         SnsClientBuilder builder = SnsClient.builder()
             .region(Region.of(awsRegion))
-            .credentialsProvider(DefaultCredentialsProvider.create()); // Usa IAM Role do Lambda automaticamente
+            .credentialsProvider(DefaultCredentialsProvider.create());
 
-        // Para LocalStack ou outros endpoints customizados
         if (snsEndpoint != null && !snsEndpoint.isEmpty()) {
             builder.endpointOverride(URI.create(snsEndpoint));
         }

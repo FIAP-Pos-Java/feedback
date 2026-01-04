@@ -14,13 +14,8 @@ public class JacksonConfig {
     @Primary
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        
-        // Registrar módulo para suportar Java 8 Date/Time API (LocalDateTime, etc)
         mapper.registerModule(new JavaTimeModule());
-        
-        // Desabilitar escrita de datas como timestamps
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        
         return mapper;
     }
 }
