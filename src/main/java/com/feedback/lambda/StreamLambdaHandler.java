@@ -14,17 +14,20 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class StreamLambdaHandler implements RequestStreamHandler {
-    
+
     private static SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
 
     static {
         try {
-            handler = new SpringBootProxyHandlerBuilder<AwsProxyRequest>()
+            var handlerTemp = new SpringBootProxyHandlerBuilder<AwsProxyRequest>()
                     .defaultProxy()
                     .asyncInit()
                     .springBootApplication(FeedbackApplication.class)
                     .buildAndInitialize();
-        } catch (ContainerInitializationException e) {
+            handler = handlerTemp;
+        } 
+        catch (ContainerInitializationException e) 
+        {
             e.printStackTrace();
             throw new RuntimeException("Não foi possível inicializar o Spring Boot", e);
         }

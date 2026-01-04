@@ -25,7 +25,7 @@ public class AvaliacaoService {
 
     @Autowired
     private SnsClient snsClient;
-    
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -35,8 +35,9 @@ public class AvaliacaoService {
     @Transactional
     public AvaliacaoResponse processarAvaliacao(AvaliacaoRequest request) {
         validarAvaliacao(request);
-        Feedback feedback = Feedback.fromRequest(request.getDescricao(), request.getNota());
-        Feedback feedbackSalvo = feedbackRepository.save(feedback);
+
+        var feedback = Feedback.fromRequest(request.getDescricao(), request.getNota());
+        var feedbackSalvo = feedbackRepository.save(feedback);
 
         if (feedbackSalvo.getCritico() != null && feedbackSalvo.getCritico()) {
             publicarAlertaCritico(feedbackSalvo);
@@ -55,18 +56,21 @@ public class AvaliacaoService {
         }
 
         try {
-            String mensagem = objectMapper.writeValueAsString(feedback);
-            
-            PublishRequest publishRequest = PublishRequest.builder()
+            var mensagem = objectMapper.writeValueAsString(feedback);
+            var publishRequest = PublishRequest.builder()
                 .topicArn(snsTopicArn)
                 .subject("Alerta: Feedback Crítico Recebido")
                 .message(mensagem)
                 .build();
 
             snsClient.publish(publishRequest);
-        } catch (SnsException e) {
+        } 
+        catch (SnsException e) 
+        {
             LOG.error("Erro ao publicar no SNS. Feedback ID: {}", feedback.getId(), e);
-        } catch (Exception e) {
+        } 
+        catch (Exception e) 
+        {
             LOG.error("Erro ao serializar feedback. Feedback ID: {}", feedback.getId(), e);
         }
     }
@@ -75,6 +79,7 @@ public class AvaliacaoService {
         if (request.getDescricao() == null || request.getDescricao().trim().isEmpty()) {
             throw new IllegalArgumentException("A descrição não pode estar vazia");
         }
+
         if (request.getNota() == null || request.getNota() < 0 || request.getNota() > 10) {
             throw new IllegalArgumentException("A nota deve estar entre 0 e 10");
         }

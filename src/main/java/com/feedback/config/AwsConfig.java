@@ -21,7 +21,7 @@ public class AwsConfig {
 
     @Bean
     public SnsClient snsClient() {
-        SnsClientBuilder builder = SnsClient.builder()
+        var builder = SnsClient.builder()
             .region(Region.of(awsRegion))
             .credentialsProvider(DefaultCredentialsProvider.create());
 
