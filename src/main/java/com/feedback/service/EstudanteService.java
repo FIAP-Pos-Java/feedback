@@ -30,8 +30,8 @@ public class EstudanteService {
         this.estudanteRepository.save(estudante);
     }
 
-    public void atualizarEstudante(AtualizarPessoaDTO dto) {
-        Estudante estudante = this.estudanteRepository.findById(dto.id()).orElseThrow(() -> new IllegalArgumentException("Estudante não encontrado"));
+    public void atualizarEstudante(UUID id, AtualizarPessoaDTO dto) {
+        Estudante estudante = this.estudanteRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Estudante não encontrado"));
 
         estudante.setNome(dto.nome());
         estudante.setEndereco(dto.endereco());

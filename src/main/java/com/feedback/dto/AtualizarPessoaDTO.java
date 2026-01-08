@@ -6,9 +6,6 @@ import java.util.UUID;
 
 public record AtualizarPessoaDTO(
         @NotNull
-        UUID id,
-
-        @NotNull
         String nome,
 
         @NotNull
