@@ -28,8 +28,8 @@ public class AdministradorService {
         this.administradorRepository.save(administrador);
     }
 
-    public void atualizarAdministrador(AtualizarPessoaDTO dto) {
-        Administrador administrador = this.administradorRepository.findById(dto.id())
+    public void atualizarAdministrador(UUID id, AtualizarPessoaDTO dto) {
+        Administrador administrador = this.administradorRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Administrador não encontrado"));
 
         administrador.setNome(dto.nome());
