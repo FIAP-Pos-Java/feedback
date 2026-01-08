@@ -2,7 +2,7 @@ package com.feedback.dto;
 
 import software.amazon.awssdk.annotations.NotNull;
 
-public record PessoaDTO(
+public record SalvarPessoaDTO(
         @NotNull
         String nome,
 
