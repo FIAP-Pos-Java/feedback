@@ -15,6 +15,13 @@ public abstract class  Pessoa {
 
     public Pessoa() {}
 
+    public Pessoa(UUID id, String nome, String endereco, String email) {
+        this.id = id;
+        this.nome = nome;
+        this.endereco = endereco;
+        this.email = email;
+    }
+
     public UUID getId() {
         return id;
     }
