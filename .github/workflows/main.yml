@@ -33,13 +33,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
 
-      # 5. Deploy direto para Lambda
-      - name: Deploy Lambda
+    # 5. Deploy via S3 para Lambda
+      - name: Upload to S3
+        run: |
+          aws s3 cp target/feedback-1.0.0-SNAPSHOT-aws.jar s3://meu-bucket-lambda/
+
+      - name: Deploy Lambda from S3
         run: |
           aws lambda update-function-code \
-            --function-name feedback \
-            --zip-file fileb://target/feedback-1.0.0-SNAPSHOT-aws.jar \
+            --function-name feedback-1.0.0-SNAPSHOT-aws \
+            --s3-bucket meu-bucket-lambda \
+            --s3-key feedback-1.0.0-SNAPSHOT-aws.jar \
             --region us-east-2
+
 
           aws lambda update-function-configuration \
             --function-name feedback \
