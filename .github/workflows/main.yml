@@ -33,13 +33,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2   # região da sua Lambda
 
-      # 5. Deploy da Lambda
-      - name: Deploy to AWS Lambda
-        uses: aws-actions/aws-lambda-deploy@v1
-        with:
-          function-name: feedback
-          zip-file: target/feedback-1.0.0-SNAPSHOT-aws.jar
-          aws-region: us-east-2
-          handler: com.feedback.lambda.StreamLambdaHandler::handleRequest
-          runtime: java21
-          dry-run: false
+      - name: Deploy with AWS CLI
+        run: |
+          aws lambda update-function-code \
+          --function-name feedback \
+          --zip-file fileb://target/feedback-1.0.0-SNAPSHOT-aws.jar \
+          --region us-east-2
+
