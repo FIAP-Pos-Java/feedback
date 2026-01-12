@@ -38,8 +38,5 @@ jobs:
         uses: aws-actions/aws-lambda-deploy@v1
         with:
           function-name: feedback
-          zip-file: target/feedback-1.0.0-SNAPSHOT-aws.jar
+          zip-file: target/feedback-1.0.0-SNAPSHOT.jar.original
           aws-region: us-east-2
-          handler: com.feedback.lambda.StreamLambdaHandler::handleRequest
-          runtime: Java 21
-          dry-run: false
