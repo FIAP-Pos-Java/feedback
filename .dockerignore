@@ -1,5 +1,5 @@
-*
-!target/*-runner
-!target/*-runner.jar
-!target/lib/*
-!target/quarkus-app/*
+# Ignorar tudo dentro da pasta target
+target/*
+
+# Mas manter os arquivos .jar
+!target/*.jar
