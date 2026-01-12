@@ -1,4 +1,4 @@
-name: Deploy Lambda Feedback
+name: Deploy da Lambda Feedback
 
 on:
   push:
