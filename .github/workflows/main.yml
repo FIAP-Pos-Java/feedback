@@ -1,4 +1,4 @@
-name: Deploy da Lambda Feedback
+name: Deploy Lambda Feedback
 
 on:
   push:
@@ -14,7 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Setup do Java (Java 21, para compilar seu projeto)
+      # 2. Setup Java
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
@@ -31,12 +31,21 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2   # região da sua Lambda
+          aws-region: us-east-2
 
-      - name: Deploy with AWS CLI
+      # 5. Deploy direto para Lambda
+      - name: Deploy Lambda
         run: |
           aws lambda update-function-code \
-          --function-name feedback \
-          --zip-file fileb://target/feedback-1.0.0-SNAPSHOT-aws.jar \
-          --region us-east-2
+            --function-name feedback \
+            --zip-file fileb://target/feedback-1.0.0-SNAPSHOT-aws.jar \
+            --region us-east-2
+
+          aws lambda update-function-configuration \
+            --function-name feedback \
+            --runtime java21 \
+            --handler com.feedback.lambda.StreamLambdaHandler::handleRequest \
+            --layers arn:aws:lambda:us-east-2:877352799066:layer:postgresql-sns-layer:1  
+            --region us-east-2
+
 
