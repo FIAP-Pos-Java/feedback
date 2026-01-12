@@ -38,7 +38,7 @@ jobs:
         run: |
           aws lambda update-function-code \
             --function-name feedback \
-            --zip-file fileb://target/feedback-1.0.0-SNAPSHOT-aws.jar \
+            --zip-file fileb://target/lambda-fiap.hello-1.0.0-SNAPSHOT-runner \
             --region us-east-2
 
           aws lambda update-function-configuration \
