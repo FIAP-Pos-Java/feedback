@@ -51,7 +51,7 @@ public class AvaliacaoService {
 
     private void publicarAlertaCritico(Feedback feedback) {
         if (snsTopicArn == null || snsTopicArn.isEmpty()) {
-            LOG.warn("SNS Topic ARN não configurado. Alerta crítico não será publicado.");
+            LOG.warn("SNS Topic ARN não configurado. O alerta crítico não será publicado.");
             return;
         }
 
@@ -77,11 +77,11 @@ public class AvaliacaoService {
 
     private void validarAvaliacao(AvaliacaoRequest request) {
         if (request.getDescricao() == null || request.getDescricao().trim().isEmpty()) {
-            throw new IllegalArgumentException("A descrição não pode estar vazia");
+            throw new IllegalArgumentException("A descrição da avaliação não pode estar vazia");
         }
 
         if (request.getNota() == null || request.getNota() < 0 || request.getNota() > 10) {
-            throw new IllegalArgumentException("A nota deve estar entre 0 e 10");
+            throw new IllegalArgumentException("A nota da avaliação deve estar entre 0 e 10");
         }
     }
 }
