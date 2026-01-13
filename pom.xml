@@ -86,6 +86,32 @@
             <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- AWS SDK v2 - SNS -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sns</artifactId>
+            <version>2.21.42</version>
+        </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>auth</artifactId>
+            <version>2.21.42</version>
+        </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>regions</artifactId>
+            <version>2.21.42</version>
+        </dependency>
+
+        <!-- Validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -111,6 +137,26 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+
+                            <filters>
+                                <filter>
+                                    <artifact>software.amazon.awssdk:sns</artifact>
+                                    <excludes><exclude>**/*</exclude></excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>software.amazon.awssdk:auth</artifact>
+                                    <excludes><exclude>**/*</exclude></excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>software.amazon.awssdk:regions</artifact>
+                                    <excludes><exclude>**/*</exclude></excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.postgresql:postgresql</artifact>
+                                    <excludes><exclude>**/*</exclude></excludes>
+                                </filter>
+                            </filters>
+
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.feedback.lambda.StreamLambdaHandler</mainClass>
