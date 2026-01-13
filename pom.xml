@@ -98,17 +98,15 @@
                 <version>3.5.1</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <shadedArtifactAttached>true</shadedArtifactAttached>
-                    <shadedClassifierName>aws</shadedClassifierName>
                     <filters>
-                        <!-- Excluir PostgreSQL do JAR sombreado -->
+                        <!-- Excluir PostgreSQL do JAR sombreado (está no layer) -->
                         <filter>
                             <artifact>org.postgresql:postgresql</artifact>
                             <excludes>
                                 <exclude>**/*</exclude>
                             </excludes>
                         </filter>
-                        <!-- Excluir AWS SDK SNS do JAR sombreado -->
+                        <!-- Excluir AWS SDK SNS do JAR sombreado (está no layer) -->
                         <filter>
                             <artifact>software.amazon.awssdk:sns</artifact>
                             <excludes>
@@ -122,7 +120,7 @@
                                 <exclude>**/*</exclude>
                             </excludes>
                         </filter>
-                        <!-- Filtros gerais para cortar arquivos inúteis -->
+                        <!-- Excluir apenas assinaturas digitais -->
                         <filter>
                             <artifact>*:*</artifact>
                             <excludes>
@@ -132,18 +130,6 @@
                             </excludes>
                         </filter>
                     </filters>
-                    <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                            <resource>META-INF/spring.handlers</resource>
-                        </transformer>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                            <resource>META-INF/spring.schemas</resource>
-                        </transformer>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                            <resource>META-INF/spring.factories</resource>
-                        </transformer>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                    </transformers>
                 </configuration>
                 <executions>
                     <execution>
@@ -154,7 +140,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 </project>
