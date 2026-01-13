@@ -31,13 +31,6 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- Driver do PostgreSQL -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- Validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -64,28 +57,11 @@
             <version>${aws-lambda-java-events.version}</version>
         </dependency>
 
-        <!-- AWS SDK v2 - SNS -->
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>sns</artifactId>
-            <version>2.21.42</version>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>auth</artifactId>
-            <version>2.21.42</version>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>regions</artifactId>
-            <version>2.21.42</version>
-        </dependency>
-
         <!-- AWS Serverless Java Container (Spring Boot 3) -->
         <dependency>
             <groupId>com.amazonaws.serverless</groupId>
             <artifactId>aws-serverless-java-container-springboot3</artifactId>
-            <version>2.0.0-M2</version>
+            <version>2.1.5</version>
         </dependency>
 
         <!-- Spring Boot Starter Test (JUnit 5, Mockito, Spring Test, MockMvc) -->
@@ -110,10 +86,7 @@
             <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
-
-
 
     <build>
         <finalName>feedback-lambda</finalName>
@@ -131,44 +104,13 @@
                 <version>3.6.0</version>
                 <executions>
                     <execution>
+                        <id>shade-my-jar</id>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <filters>
-                                <!-- Excluir PostgreSQL (layer) -->
-                                <filter>
-                                    <artifact>org.postgresql:postgresql</artifact>
-                                    <excludes>
-                                        <exclude>**/*</exclude>
-                                    </excludes>
-                                </filter>
-                                <!-- Excluir AWS SDK SNS (layer) -->
-                                <filter>
-                                    <artifact>software.amazon.awssdk:sns</artifact>
-                                    <excludes>
-                                        <exclude>**/*</exclude>
-                                    </excludes>
-                                </filter>
-                                <!-- Excluir cliente URL do AWS SDK -->
-                                <filter>
-                                    <artifact>software.amazon.awssdk:url-connection-client</artifact>
-                                    <excludes>
-                                        <exclude>**/*</exclude>
-                                    </excludes>
-                                </filter>
-                                <!-- Excluir assinaturas digitais -->
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.feedback.lambda.StreamLambdaHandler</mainClass>
