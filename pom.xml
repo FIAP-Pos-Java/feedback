@@ -164,12 +164,15 @@
                             </excludes>
                         </filter>
                     </filters>
+
                     <transformers>
-                        <!-- Define o handler como Main-Class -->
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>com.feedback.lambda.StreamLambdaHandler</mainClass>
+                            <manifestEntries>
+                                <Main-Class>com.feedback.lambda.StreamLambdaHandler</Main-Class>
+                            </manifestEntries>
                         </transformer>
                     </transformers>
+
                 </configuration>
                 <executions>
                     <execution>
