@@ -129,14 +129,6 @@
                                 <exclude>META-INF/*.SF</exclude>
                                 <exclude>META-INF/*.DSA</exclude>
                                 <exclude>META-INF/*.RSA</exclude>
-                                <exclude>META-INF/MANIFEST.MF</exclude>
-                                <exclude>META-INF/LICENSE*</exclude>
-                                <exclude>META-INF/NOTICE*</exclude>
-                                <exclude>META-INF/DEPENDENCIES</exclude>
-                                <exclude>module-info.class</exclude>
-                                <exclude>**/*.html</exclude>
-                                <exclude>**/*.txt</exclude>
-                                <exclude>**/docs/**</exclude>
                             </excludes>
                         </filter>
                     </filters>
