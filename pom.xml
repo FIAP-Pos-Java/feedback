@@ -129,7 +129,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>3.6.0</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <filters>
@@ -166,13 +166,11 @@
                     </filters>
 
                     <transformers>
+                        <!-- Define o handler como Main-Class -->
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <manifestEntries>
-                                <Main-Class>com.feedback.lambda.StreamLambdaHandler</Main-Class>
-                            </manifestEntries>
+                            <mainClass>com.feedback.lambda.StreamLambdaHandler</mainClass>
                         </transformer>
                     </transformers>
-
                 </configuration>
                 <executions>
                     <execution>
