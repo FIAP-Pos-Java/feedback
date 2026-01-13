@@ -25,12 +25,6 @@
     </properties>
 
     <dependencies>
-        <!-- JPA -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-
         <!-- Validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -61,31 +55,26 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>sns</artifactId>
-            <version>2.20.143</version>
+            <version>2.21.42</version>
         </dependency>
 
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>auth</artifactId>
-            <version>2.20.143</version>
+            <version>2.21.42</version>
         </dependency>
 
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>regions</artifactId>
-            <version>2.20.143</version>
+            <version>2.21.42</version>
         </dependency>
 
         <!-- AWS Serverless Java Container (Spring Boot 3) -->
         <dependency>
             <groupId>com.amazonaws.serverless</groupId>
             <artifactId>aws-serverless-java-container-springboot3</artifactId>
-        </dependency>
-
-        <!-- Bean Validation (para @NotNull, @Valid etc.) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
+            <version>2.0.0-M2</version>
         </dependency>
 
     </dependencies>
