@@ -1,4 +1,4 @@
-name: Deploy Lambda Feedback
+name: Deploy Lambda
 
 on:
   push:
@@ -6,26 +6,22 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      # 1. Checkout do código
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      # 2. Setup Java
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'temurin'
 
-      # 3. Build com Maven
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      # 4. Configurar credenciais AWS
+      # Configurar credenciais da AWS
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -33,19 +29,30 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
 
-      # 5. Deploy direto para Lambda
-      - name: Deploy Lambda
+      - name: Upload JAR to S3
+        run: |
+          aws s3 cp target/feedback-1.0.0-SNAPSHOT-aws.jar \
+            s3://feedback-app-beatriz/feedback-1.0.0-SNAPSHOT-aws.jar \
+           --region us-east-2
+
+      - name: Deploy Lambda from S3
         run: |
           aws lambda update-function-code \
             --function-name feedback \
-            --zip-file fileb://target/lambda-fiap.hello-1.0.0-SNAPSHOT-runner \
+            --s3-bucket feedback-app-beatriz \
+            --s3-key feedback-1.0.0-SNAPSHOT-aws.jar \
             --region us-east-2
 
+      - name: Wait until Lambda is updated 
+        run: aws lambda wait function-updated 
+                --function-name feedback 
+                --region us-east-2
+
+      - name: Update Lambda configuration with Layer
+        run: |
           aws lambda update-function-configuration \
             --function-name feedback \
             --runtime java21 \
             --handler com.feedback.lambda.StreamLambdaHandler::handleRequest \
-            --layers arn:aws:lambda:us-east-2:877352799066:layer:postgresql-sns-layer:1  
+            --layers arn:aws:lambda:us-east-2:877352799066:layer:postgresql-sns-layer:1 \
             --region us-east-2
-
-
