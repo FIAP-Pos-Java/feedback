@@ -25,14 +25,13 @@
     </properties>
 
     <dependencies>
-
         <!-- Spring Data JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- Driver do PostgreSQL (se não estiver no layer, precisa aqui) -->
+        <!-- Driver do PostgreSQL -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -45,30 +44,7 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- Spring Boot Starter Test (JUnit 5, Mockito, Spring Test, MockMvc) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- JUnit Jupiter API (separado, caso queira usar diretamente) -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.10.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.10.0</version>
-            <scope>test</scope>
-        </dependency>
-
-
-        <!-- Web (se necessário para REST controllers) -->
+        <!-- Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -94,13 +70,11 @@
             <artifactId>sns</artifactId>
             <version>2.21.42</version>
         </dependency>
-
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>auth</artifactId>
             <version>2.21.42</version>
         </dependency>
-
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>regions</artifactId>
@@ -114,7 +88,32 @@
             <version>2.0.0-M2</version>
         </dependency>
 
+        <!-- Spring Boot Starter Test (JUnit 5, Mockito, Spring Test, MockMvc) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit Jupiter API -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit Jupiter Engine -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
+
+
 
     <build>
         <finalName>feedback-lambda</finalName>
@@ -130,58 +129,55 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.6.0</version>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <filters>
-                        <!-- Excluir PostgreSQL (layer) -->
-                        <filter>
-                            <artifact>org.postgresql:postgresql</artifact>
-                            <excludes>
-                                <exclude>**/*</exclude>
-                            </excludes>
-                        </filter>
-                        <!-- Excluir AWS SDK SNS (layer) -->
-                        <filter>
-                            <artifact>software.amazon.awssdk:sns</artifact>
-                            <excludes>
-                                <exclude>**/*</exclude>
-                            </excludes>
-                        </filter>
-                        <!-- Excluir cliente URL do AWS SDK -->
-                        <filter>
-                            <artifact>software.amazon.awssdk:url-connection-client</artifact>
-                            <excludes>
-                                <exclude>**/*</exclude>
-                            </excludes>
-                        </filter>
-                        <!-- Excluir assinaturas digitais -->
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>META-INF/*.SF</exclude>
-                                <exclude>META-INF/*.DSA</exclude>
-                                <exclude>META-INF/*.RSA</exclude>
-                            </excludes>
-                        </filter>
-                    </filters>
-
-                    <transformers>
-                        <!-- Define o handler como Main-Class -->
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>com.feedback.lambda.StreamLambdaHandler</mainClass>
-                        </transformer>
-                    </transformers>
-                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <!-- Excluir PostgreSQL (layer) -->
+                                <filter>
+                                    <artifact>org.postgresql:postgresql</artifact>
+                                    <excludes>
+                                        <exclude>**/*</exclude>
+                                    </excludes>
+                                </filter>
+                                <!-- Excluir AWS SDK SNS (layer) -->
+                                <filter>
+                                    <artifact>software.amazon.awssdk:sns</artifact>
+                                    <excludes>
+                                        <exclude>**/*</exclude>
+                                    </excludes>
+                                </filter>
+                                <!-- Excluir cliente URL do AWS SDK -->
+                                <filter>
+                                    <artifact>software.amazon.awssdk:url-connection-client</artifact>
+                                    <excludes>
+                                        <exclude>**/*</exclude>
+                                    </excludes>
+                                </filter>
+                                <!-- Excluir assinaturas digitais -->
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.feedback.lambda.StreamLambdaHandler</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
 </project>
-
