@@ -43,6 +43,11 @@ jobs:
             --s3-key feedback-1.0.0-SNAPSHOT-aws.jar \
             --region us-east-2
 
+      - name: Wait until Lambda is updated 
+        run: aws lambda wait function-updated 
+                --function-name feedback 
+                --region us-east-2
+
       - name: Update Lambda configuration with Layer
         run: |
           aws lambda update-function-configuration \
