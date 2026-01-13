@@ -86,6 +86,7 @@
 
 
     <build>
+        <finalName>feedback-lambda</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
