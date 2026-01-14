@@ -4,7 +4,6 @@ import com.amazonaws.serverless.exceptions.ContainerInitializationException;
 import com.amazonaws.serverless.proxy.model.AwsProxyRequest;
 import com.amazonaws.serverless.proxy.model.AwsProxyResponse;
 import com.amazonaws.serverless.proxy.spring.SpringBootLambdaContainerHandler;
-import com.amazonaws.serverless.proxy.spring.SpringBootProxyHandlerBuilder;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.feedback.FeedbackApplication;
@@ -19,22 +18,17 @@ public class StreamLambdaHandler implements RequestStreamHandler {
 
     static {
         try {
-            var handlerTemp = new SpringBootProxyHandlerBuilder<AwsProxyRequest>()
-                    .defaultProxy()
-                    .asyncInit()
-                    .springBootApplication(FeedbackApplication.class)
-                    .buildAndInitialize();
-            handler = handlerTemp;
-        } 
-        catch (ContainerInitializationException e) 
-        {
+            // inicializa o container Spring Boot para API Gateway
+            handler = SpringBootLambdaContainerHandler.getAwsProxyHandler(FeedbackApplication.class);
+        } catch (ContainerInitializationException e) {
             e.printStackTrace();
             throw new RuntimeException("Não foi possível inicializar o Spring Boot", e);
         }
     }
 
     @Override
-    public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
-        handler.proxyStream(input, output, context);
+    public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
+        handler.proxyStream(inputStream, outputStream, context);
     }
 }
+
